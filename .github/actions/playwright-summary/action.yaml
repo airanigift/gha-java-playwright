@@ -1,0 +1,15 @@
+name: "Playwright Test Summary"
+description: "Reads Playwright test results and formats a summary."
+runs:
+  using: "composite"
+  steps:
+    - name: Read Test Results
+      run: cat test-results/report.txt
+      shell: bash
+
+    - name: Format Summary
+      run: |
+        echo "## Playwright Test Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        cat test-results/report.txt >> $GITHUB_STEP_SUMMARY
+      shell: bash

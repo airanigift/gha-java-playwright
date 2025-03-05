@@ -1,0 +1,4 @@
+echo "✅ Test 1: Passed" > test-results/report.txt
+echo "✅ Test 2: Passed" >> test-results/report.txt
+echo "❌ Test 3: Failed" >> test-results/report.txt
+echo "✅ Test 4: Passed" >> test-results/report.txt

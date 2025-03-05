@@ -1,0 +1,25 @@
+name: Custom Playwright Action
+
+on:
+  push:
+    branches:
+      - main  # Runs on every push to main
+
+jobs:
+  run-custom-action:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Generate Fake Test Results
+        run: |
+          mkdir -p test-results
+          echo "✅ Test 1: Passed" > test-results/report.txt
+          echo "✅ Test 2: Passed" >> test-results/report.txt
+          echo "❌ Test 3: Failed" >> test-results/report.txt
+          echo "✅ Test 4: Passed" >> test-results/report.txt
+
+      - name: Run Custom Playwright Summary Action
+        uses: ./.github/actions/playwright-summary
