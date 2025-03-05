@@ -1,0 +1,54 @@
+name: Scheduled Regression Tests
+
+on:
+  schedule:
+    - cron: "0 1 * * 1-5"  # Runs at 1 AM UTC on weekdays (Monday to Friday)
+
+  workflow_dispatch:  # Allows manual execution of the workflow
+
+jobs:
+  regression-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Maven Dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: maven-${{ runner.os }}-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            maven-${{ runner.os }}-
+
+      - name: Set up Maven
+        run: |
+          sudo apt update
+          sudo apt install -y maven
+          mvn -version
+
+      - name: Install dependencies (if cache is not available)
+        run: mvn install
+
+      - name: Install Playwright Browsers
+        run: npx playwright install
+
+      - name: Run Regression Tests
+        run: mvn test
+
+      # ✅ Upload Test Reports for Review
+      - name: Upload Test Reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: Regression-Test-Reports
+          path: |
+            target/reports
+            target/surefire-reports
+          retention-days: 7
